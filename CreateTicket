@@ -1,1 +1,118 @@
+Private Sub createTicket(sender As Object, e As EventArgs) Handles closeTicket.Click
 
+        'generate ticket
+        Dim cusId As String = cID.Text
+
+        Dim idFinal As Integer = 0
+
+        Try
+
+            idFinal = Convert.ToInt32(cusId)
+        Catch ex As Exception
+
+            MsgBox("Please select a Customer")
+
+        Finally
+            NameComboBox.Focus()
+
+        End Try
+
+        Dim regDate As Date = Date.Now()
+        Dim tPrice As String = totPrice.Text
+        Dim fPrice As Decimal = Decimal.Parse(tPrice)
+        Dim ticketId As Integer
+
+        If idFinal <> 0 And tPrice <> 0 Then
+
+            Me.TicketsTableAdapter.Insert(idFinal, regDate, fPrice)
+
+            Me.TicketsTableAdapter.Update(Me.FinalFinal.Tickets)
+
+            'set ticket id
+
+            ticketId = Me.TicketsTableAdapter.ticketID()
+            Dim msgVal As String = Convert.ToString(ticketId)
+
+            MsgBox("Ticket " + msgVal + " Created")
+
+        End If
+
+        'generate items
+
+        'item fields
+        Dim itemOne As String = item1.Text
+        Dim itemTwo As String = item2.Text
+        Dim itemThree As String = item3.Text
+        Dim itemFour As String = item4.Text
+        Dim itemFive As String = item5.Text
+        Dim itemSix As String = item6.Text
+        Dim itemSeven As String = item7.Text
+        Dim itemEight As String = item8.Text
+        Dim itemNine As String = item9.Text
+        Dim itemTen As String = item10.Text
+        Dim itemEleven As String = itemDesc.Text
+
+        'quantity fields
+        Dim qtyOne As String = qty1.Text
+        Dim qtyTwo As String = qty2.Text
+        Dim qtyThree As String = qty3.Text
+        Dim qtyFour As String = qty4.Text
+        Dim qtyFive As String = qty5.Text
+        Dim qtySix As String = qty6.Text
+        Dim qtySeven As String = qty7.Text
+        Dim qtyEight As String = qty8.Text
+        Dim qtyNine As String = qty9.Text
+        Dim qtyTen As String = qty10.Text
+        Dim qtyItem As String = ItemPrice.Text
+
+        Dim itemArr() As String = {itemOne, itemTwo, itemThree, itemFour, itemFive, itemSix, itemSeven, itemEight,
+             itemNine, itemTen}
+
+        Dim qtyArr() As String = {qtyOne, qtyTwo, qtyThree, qtyFour, qtyFive, qtySix, qtySeven, qtyEight, qtyNine, qtyTen}
+
+
+        Dim i As Integer = 0
+
+        If cID.Text IsNot "" Then
+
+            For Each item As String In itemArr
+
+                If item IsNot "" Then
+
+                    Dim itemId As Integer = Me.ItemsTableAdapter.findID(itemArr(i))
+                    Dim qty As Decimal = qtyArr(i)
+                    Dim itemS As Decimal = Convert.ToDecimal(qtyArr(i))
+                    Dim itemF As Decimal = Me.ItemsTableAdapter.itemPrice(itemArr(i))
+                    Dim itemP As Decimal = itemS * itemF
+                    Dim itemDec As String = ""
+
+                    Me.SalesTableAdapter.Insert(itemId, qty, itemP, ticketId, itemDec)
+
+                    Me.SalesTableAdapter.Update(Me.FinalFinal.Sales)
+
+                    i += 1
+
+                End If
+
+            Next
+        End If
+
+        If itemEleven IsNot "" And idFinal <> 0 Then
+
+            Dim itemId As Integer = 52
+            Dim qty As Decimal = 0
+            Dim itemP As Decimal = qtyItem
+            Dim itemDec As String = itemEleven
+
+            Me.SalesTableAdapter.Insert(itemId, qty, itemP, ticketId, itemDec)
+
+            Me.SalesTableAdapter.Update(Me.FinalFinal.Sales)
+
+        End If
+
+        If vbOK Then
+            Me.Close()
+        End If
+
+
+    End Sub
