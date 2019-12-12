@@ -1,0 +1,44 @@
+Private Sub NameComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles NameComboBox.SelectedIndexChanged
+        Dim val As String = NameComboBox.Text
+        Dim idVal As String
+        PictureBox1.Image = Nothing
+
+
+        idVal = Me.CustomersTableAdapter2.findId(val)
+        cID.Text = idVal
+
+
+        Dim cusImage As Byte()
+
+        Try
+            cusImage = Me.CustomersTableAdapter1.findImg(idVal)
+
+        Catch ex As Exception
+
+        End Try
+
+        Dim finCusImage As Image
+
+        Try
+            Dim ms As System.IO.MemoryStream = New System.IO.MemoryStream(cusImage)
+            finCusImage = System.Drawing.Image.FromStream(ms)
+
+            Dim getbmp As New Bitmap(finCusImage)
+
+            rWidth = getbmp.Width.ToString
+            rHeight = getbmp.Height.ToString
+
+            rImage = getbmp
+
+            Dim bmp As Bitmap = New Bitmap(finCusImage, 175, 155)
+            Dim finalImg As Image = bmp
+
+            PictureBox1.Image = finalImg
+
+        Catch ex As Exception
+
+        End Try
+
+
+
+    End Sub
