@@ -1,0 +1,1242 @@
+Public Class Form2
+
+    'global variables
+    Public btnClick As Integer
+    Public numClick As Integer
+
+    Declare Function Wow64DisableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+    Declare Function Wow64EnableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+    'Public osk As String = "C:\Windows\System32\osk.exe"
+    Public osk As String = "C:\Windows\System64\TabTip.exe"
+
+    Public rWidth As String
+    Public rHeight As String
+    Public rImage As Image
+
+
+    Private Sub Button21_Click(sender As Object, e As EventArgs) Handles closeTicket.Click
+
+        'generate ticket
+        Dim cusId As String = cID.Text
+
+        Dim idFinal As Integer = 0
+
+        Try
+
+            idFinal = Convert.ToInt32(cusId)
+        Catch ex As Exception
+
+            MsgBox("Please select a Customer")
+
+        Finally
+            NameComboBox.Focus()
+
+        End Try
+
+        Dim regDate As Date = Date.Now()
+        Dim tPrice As String = totPrice.Text
+        Dim fPrice As Decimal = Decimal.Parse(tPrice)
+        Dim ticketId As Integer
+
+        'check id and total price
+        If idFinal <> 0 And tPrice <> 0 Then
+
+            Me.TicketsTableAdapter.Insert(idFinal, regDate, fPrice)
+
+            Me.TicketsTableAdapter.Update(Me.FinalFinal.Tickets)
+
+            'set ticket id
+
+            ticketId = Me.TicketsTableAdapter.ticketID()
+            Dim msgVal As String = Convert.ToString(ticketId)
+
+            MsgBox("Ticket " + msgVal + " Created")
+
+        End If
+
+        'generate items
+
+        'item fields
+        Dim itemOne As String = item1.Text
+        Dim itemTwo As String = item2.Text
+        Dim itemThree As String = item3.Text
+        Dim itemFour As String = item4.Text
+        Dim itemFive As String = item5.Text
+        Dim itemSix As String = item6.Text
+        Dim itemSeven As String = item7.Text
+        Dim itemEight As String = item8.Text
+        Dim itemNine As String = item9.Text
+        Dim itemTen As String = item10.Text
+        Dim itemEleven As String = itemDesc.Text
+
+        'quantity fields
+        Dim qtyOne As String = qty1.Text
+        Dim qtyTwo As String = qty2.Text
+        Dim qtyThree As String = qty3.Text
+        Dim qtyFour As String = qty4.Text
+        Dim qtyFive As String = qty5.Text
+        Dim qtySix As String = qty6.Text
+        Dim qtySeven As String = qty7.Text
+        Dim qtyEight As String = qty8.Text
+        Dim qtyNine As String = qty9.Text
+        Dim qtyTen As String = qty10.Text
+        Dim qtyItem As String = ItemPrice.Text
+
+        Dim itemArr() As String = {itemOne, itemTwo, itemThree, itemFour, itemFive, itemSix, itemSeven, itemEight,
+             itemNine, itemTen}
+
+        Dim qtyArr() As String = {qtyOne, qtyTwo, qtyThree, qtyFour, qtyFive, qtySix, qtySeven, qtyEight, qtyNine, qtyTen}
+
+
+        Dim i As Integer = 0
+
+        'check if customer is selected
+        If cID.Text IsNot "" Then
+
+            'insert items into db
+            For Each item As String In itemArr
+
+                If item IsNot "" Then
+
+                    Dim itemId As Integer = Me.ItemsTableAdapter.findID(itemArr(i))
+                    Dim qty As Decimal = qtyArr(i)
+                    Dim itemS As Decimal = Convert.ToDecimal(qtyArr(i))
+                    Dim itemF As Decimal = Me.ItemsTableAdapter.itemPrice(itemArr(i))
+                    Dim itemP As Decimal = itemS * itemF
+                    Dim itemDec As String = ""
+
+                    Me.SalesTableAdapter.Insert(itemId, qty, itemP, ticketId, itemDec)
+
+                    Me.SalesTableAdapter.Update(Me.FinalFinal.Sales)
+
+                    i += 1
+
+                End If
+
+            Next
+        End If
+
+        'insert named item into db
+        If itemEleven IsNot "" And idFinal <> 0 Then
+
+            Dim itemId As Integer = 52
+            Dim qty As Decimal = 0
+            Dim itemP As Decimal = qtyItem
+            Dim itemDec As String = itemEleven
+
+            Me.SalesTableAdapter.Insert(itemId, qty, itemP, ticketId, itemDec)
+
+            Me.SalesTableAdapter.Update(Me.FinalFinal.Sales)
+
+        End If
+
+        'close form after ticket created ok
+        If vbOK Then
+            Me.Close()
+        End If
+
+
+    End Sub
+
+    Private Sub add1_Click(sender As Object, e As EventArgs) Handles add1.Click
+
+        btnClick = 1
+
+        Dim form4 As New Form4
+
+        form4.StartPosition = FormStartPosition.Manual
+        form4.DesktopLocation = Me.DesktopLocation
+
+        form4.Show()
+
+    End Sub
+
+ 
+
+    Private Sub CustomersBindingNavigatorSaveItem_Click(sender As Object, e As EventArgs)
+        Me.Validate()
+        Me.CustomersBindingSource.EndEdit()
+        Me.TableAdapterManager.UpdateAll(Me.FinalData)
+
+    End Sub
+
+    Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'ImageData.Customers' table. You can move, or remove it, as needed.
+        Me.CustomersTableAdapter3.Fill(Me.ImageData.Customers)
+
+        'TODO: This line of code loads data into the 'FinalFinal.Items' table. You can move, or remove it, as needed.
+        Me.ItemsTableAdapter.Fill(Me.FinalFinal.Items)
+        'TODO: This line of code loads data into the 'FinalFinal.Sales' table. You can move, or remove it, as needed.
+        Me.SalesTableAdapter.Fill(Me.FinalFinal.Sales)
+        'TODO: This line of code loads data into the 'FinalFinal.Tickets' table. You can move, or remove it, as needed.
+        Me.TicketsTableAdapter.Fill(Me.FinalFinal.Tickets)
+        'TODO: This line of code loads data into the 'GetCustomerId.Customers' table. You can move, or remove it, as needed.
+        Me.CustomersTableAdapter2.Fill(Me.GetCustomerId.Customers)
+        'TODO: This line of code loads data into the 'FinalFinal.Customers' table. You can move, or remove it, as needed.
+        Me.CustomersTableAdapter1.Fill(Me.FinalFinal.Customers)
+        'TODO: This line of code loads data into the 'FinalData.Customers' table. You can move, or remove it, as needed.
+        Me.CustomersTableAdapter.Fill(Me.FinalData.Customers)
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+        'open add customer form
+        Dim formC As New Customer
+
+        formC.StartPosition = FormStartPosition.Manual
+        formC.DesktopLocation = Me.DesktopLocation
+        formC.Show()
+
+    End Sub
+
+    Private Sub NameComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles NameComboBox.SelectedIndexChanged
+        'customer details
+        Dim val As String = NameComboBox.Text
+        Dim idVal As String
+        PictureBox1.Image = Nothing
+
+        'get customer details from combobox select
+        idVal = Me.CustomersTableAdapter2.findId(val)
+        cID.Text = idVal
+
+        'display customer image in image box
+        Dim cusImage As Byte()
+
+        'check for image if not display nothing
+        Try
+            cusImage = Me.CustomersTableAdapter1.findImg(idVal)
+
+        Catch ex As Exception
+
+        End Try
+
+        Dim finCusImage As Image
+
+        'display image if it exists
+        Try
+            Dim ms As System.IO.MemoryStream = New System.IO.MemoryStream(cusImage)
+            finCusImage = System.Drawing.Image.FromStream(ms)
+
+            Dim getbmp As New Bitmap(finCusImage)
+
+            rWidth = getbmp.Width.ToString
+            rHeight = getbmp.Height.ToString
+
+            rImage = getbmp
+
+            Dim bmp As Bitmap = New Bitmap(finCusImage, 175, 155)
+            Dim finalImg As Image = bmp
+
+            PictureBox1.Image = finalImg
+
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
+
+    Private Sub add2_Click(sender As Object, e As EventArgs) Handles add2.Click
+
+        btnClick = 2
+
+        'display items form
+        addBtns()
+
+    End Sub
+
+    Public Sub addBtns()
+
+        'display items selection form
+        Dim form4 As New Form4
+
+        form4.StartPosition = FormStartPosition.Manual
+        form4.DesktopLocation = Me.DesktopLocation
+
+        form4.Show()
+
+    End Sub
+
+    Private Sub add3_Click(sender As Object, e As EventArgs) Handles add3.Click
+        btnClick = 3
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub add4_Click(sender As Object, e As EventArgs) Handles add4.Click
+        btnClick = 4
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub add5_Click(sender As Object, e As EventArgs) Handles add5.Click
+        btnClick = 5
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub add6_Click(sender As Object, e As EventArgs) Handles add6.Click
+        btnClick = 6
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub add7_Click(sender As Object, e As EventArgs) Handles add7.Click
+        btnClick = 7
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub add8_Click(sender As Object, e As EventArgs) Handles add8.Click
+        btnClick = 8
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub add9_Click(sender As Object, e As EventArgs) Handles add9.Click
+        btnClick = 9
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub add10_Click(sender As Object, e As EventArgs) Handles add10.Click
+        btnClick = 10
+        'display items form
+        addBtns()
+    End Sub
+
+    Private Sub qty1_Click(sender As Object, e As EventArgs) Handles qty1.Click
+
+        openKey()
+
+        Dim itemOne As String = item1.Text
+        Dim quantityOne As String = qty1.Text
+
+        'validate item selection
+        checkItem(itemOne, quantityOne)
+
+        checkButton(item1.Text, 1)
+    End Sub
+
+    Private Sub qty2_Click(sender As Object, e As EventArgs) Handles qty2.Click
+
+        openKey()
+
+        Dim itemTwo As String = item2.Text
+        Dim quantityTwo As String = qty2.Text
+
+        'validate item selection
+        checkItem(itemTwo, quantityTwo)
+
+        checkButton(item2.Text, 2)
+
+
+    End Sub
+
+    Private Sub qty3_Click(sender As Object, e As EventArgs) Handles qty3.Click
+
+        openKey()
+
+        Dim itemThree As String = item3.Text
+        Dim quantityThree As String = qty3.Text
+
+        'validate item selection
+        checkItem(itemThree, quantityThree)
+
+        checkButton(item3.Text, 3)
+    End Sub
+
+    Private Sub qty4_Click(sender As Object, e As EventArgs) Handles qty4.Click
+        openKey()
+        Dim itemFour As String = item4.Text
+        Dim quantityFour As String = qty4.Text
+
+        'validate item selection
+        checkItem(itemFour, quantityFour)
+
+        checkButton(item4.Text, 4)
+
+    End Sub
+
+    Private Sub qty5_Click(sender As Object, e As EventArgs) Handles qty5.Click
+        openKey()
+        Dim itemFive As String = item5.Text
+        Dim quantityFive As String = qty5.Text
+
+        'validate item selection
+        checkItem(itemFive, quantityFive)
+
+        checkButton(item5.Text, 5)
+
+    End Sub
+
+    Private Sub qty6_Click(sender As Object, e As EventArgs) Handles qty6.Click
+        openKey()
+        Dim itemSix As String = item6.Text
+        Dim quantitySix As String = qty6.Text
+
+        'validate item selection
+        checkItem(itemSix, quantitySix)
+
+        checkButton(item6.Text, 6)
+
+    End Sub
+
+    Private Sub qty7_Click(sender As Object, e As EventArgs) Handles qty7.Click
+        openKey()
+        Dim itemSeven As String = item7.Text
+        Dim quantitySeven As String = qty7.Text
+
+        'validate item selection
+        checkItem(itemSeven, quantitySeven)
+
+        checkButton(item7.Text, 7)
+
+    End Sub
+
+    Private Sub qty8_Click(sender As Object, e As EventArgs) Handles qty8.Click
+        openKey()
+        Dim itemEigh As String = item8.Text
+        Dim quantityEigh As String = qty8.Text
+
+        'validate item selection
+        checkItem(itemEigh, quantityEigh)
+
+        checkButton(item8.Text, 8)
+
+    End Sub
+
+    Private Sub qty9_Click(sender As Object, e As EventArgs) Handles qty9.Click
+        openKey()
+        Dim itemNine As String = item9.Text
+        Dim quantityNine As String = qty9.Text
+
+        'validate item selection
+        checkItem(itemNine, quantityNine)
+        checkButton(item9.Text, 9)
+
+
+    End Sub
+
+    Private Sub qty10_Click(sender As Object, e As EventArgs) Handles qty10.Click
+        openKey()
+        Dim itemTen As String = item10.Text
+        Dim quantityTen As String = qty10.Text
+
+        'validate item selection
+        checkItem(itemTen, quantityTen)
+
+        checkButton(item10.Text, 10)
+
+
+    End Sub
+
+    'sub for validation for displaying numpad
+    Public Sub checkButton(text As String, number As Integer)
+        If text IsNot "" Then
+
+            numPanel.Visible = True
+
+            numClick = number
+
+        End If
+
+    End Sub
+
+    'function to find price of item
+    Public Function searchItems(value As String)
+
+        Dim foundVal As Decimal
+
+
+        foundVal = Me.ItemsTableAdapter.itemPrice(value)
+
+
+        Return foundVal
+
+    End Function
+
+    'sub to check if item field is empty before a quantity can have a value
+
+    Public Sub checkItem(item As String, quantity As String)
+        quantity = ""
+        If item Is "" Then
+            MsgBox("Please select item")
+            quantity = 0
+
+        Else
+            quantity = Nothing
+        End If
+    End Sub
+
+
+    'function to convert quantity text to decimal
+    Public Function convertDeci(val As String)
+
+        Dim rVal As Decimal = Convert.ToDecimal(val)
+
+        Return rVal
+
+    End Function
+
+    'function to return price of item
+    Public Function findP(searchW As String)
+
+        Dim price As Decimal = searchItems(searchW)
+        Return price
+
+    End Function
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+
+        'variables for calculating total
+        Dim val1 As String = qty1.Text
+        Dim val2 As String = qty2.Text
+        Dim val3 As String = qty3.Text
+        Dim val4 As String = qty4.Text
+        Dim val5 As String = qty5.Text
+        Dim val6 As String = qty6.Text
+        Dim val7 As String = qty7.Text
+        Dim val8 As String = qty8.Text
+        Dim val9 As String = qty9.Text
+        Dim val10 As String = qty10.Text
+        Dim val11 As String = ItemPrice.Text
+        'Dim numVal As Decimal = Convert.ToDecimal(val)
+
+        'variables to search price
+        Dim search1 As String = item1.Text
+        Dim search2 As String = item2.Text
+        Dim search3 As String = item3.Text
+        Dim search4 As String = item4.Text
+        Dim search5 As String = item5.Text
+        Dim search6 As String = item6.Text
+        Dim search7 As String = item7.Text
+        Dim search8 As String = item8.Text
+        Dim search9 As String = item9.Text
+        Dim search10 As String = item10.Text
+
+
+        'check which fields have values and then updating total price
+        If item1.Text Is "" Then
+
+            If itemDesc.Text Is "" Then
+
+                MsgBox("Please enter items")
+
+            End If
+        ElseIf item1.Text IsNot "" Then
+
+
+            If qty1.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 1")
+
+            Else
+
+                Dim numVal As Decimal = convertDeci(val1)
+                Dim price As Decimal = findP(search1)
+                Dim newP As Decimal = numVal * price
+
+                Try
+
+                    newP = Math.Round(newP, 2)
+
+                Catch ex As Exception
+
+                    MsgBox("Yup")
+
+                End Try
+
+                totPrice.Text = newP
+
+                total.Visible = True
+
+                totPrice.Visible = True
+
+                closeTicket.Visible = True
+
+            End If
+        End If
+
+
+        'item2
+        If item2.Text IsNot "" Then
+
+            If qty2.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 2")
+
+            Else
+                calcTot(val2, search2)
+
+            End If
+        End If
+
+
+        'item3
+        If item3.Text IsNot "" Then
+
+            If qty3.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 3")
+
+            Else
+                calcTot(val3, search3)
+
+            End If
+        End If
+
+
+        'item4
+        If item4.Text IsNot "" Then
+
+            If qty4.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 4")
+
+            Else
+                calcTot(val4, search4)
+
+            End If
+        End If
+
+
+
+        'item5
+        If item5.Text IsNot "" Then
+
+            If qty5.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 5")
+
+            Else
+                calcTot(val5, search5)
+
+            End If
+        End If
+
+
+        'item6
+        If item6.Text IsNot "" Then
+
+            If qty6.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 6")
+
+            Else
+
+                calcTot(val6, search6)
+
+            End If
+        End If
+
+
+        'item7
+        If item7.Text IsNot "" Then
+
+            If qty7.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 7")
+
+            Else
+                calcTot(val7, search7)
+
+            End If
+        End If
+
+
+        'item8
+        If item8.Text IsNot "" Then
+
+            If qty8.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 8")
+
+            Else
+
+                calcTot(val8, search8)
+
+            End If
+        End If
+
+
+        'item9
+        If item9.Text IsNot "" Then
+
+            If qty9.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 9")
+
+            Else
+                calcTot(val9, search9)
+
+            End If
+        End If
+
+        'item10
+        If item10.Text IsNot "" Then
+
+            If qty10.Text = 0 Then
+
+                MsgBox("Enter a quantity at Item 10")
+
+            Else
+                calcTot(val10, search10)
+
+            End If
+        End If
+
+
+
+        'item Description
+        If itemDesc.Text IsNot "" Then
+
+            If ItemPrice.Text = 0 Then
+
+                MsgBox("Enter an amount at Item Description")
+
+                total.Visible = False
+
+                totPrice.Visible = False
+
+                closeTicket.Visible = False
+
+            Else
+
+                Dim numVal As Decimal = Convert.ToDecimal(val11)
+                Dim newP As Decimal = numVal
+                Dim getP As String = totPrice.Text
+                Dim currentP As Decimal = Convert.ToDecimal(getP)
+                Dim totP As Decimal = newP + currentP
+
+
+                totP = Math.Round(totP, 2)
+
+                totPrice.Text = totP
+
+                total.Visible = True
+
+                totPrice.Visible = True
+
+                closeTicket.Visible = True
+
+            End If
+
+        End If
+
+    End Sub
+    'calculate ticket total
+
+    Public Function calcTot(val, search)
+
+        Dim numVal As Decimal = convertDeci(val)
+        Dim price As Decimal = findP(search)
+        Dim newP As Decimal = numVal * price
+        Dim getP As String = totPrice.Text
+        Dim currentP As Decimal = Convert.ToDecimal(getP)
+        Dim totP As Decimal = newP + currentP
+
+        totP = Math.Round(totP, 2)
+        totPrice.Text = totP
+
+    End Function
+
+    Public Sub Form2_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
+
+        Form1.tickets = New Form2
+
+    End Sub
+
+    Private Sub closeBtn_Click(sender As Object, e As EventArgs) Handles closeBtn.Click
+        numPanel.Visible = False
+
+    End Sub
+
+    Private Sub Button24_Click(sender As Object, e As EventArgs) Handles b1.Click
+        'determine which numpad button click to display value
+        Dim btn1 As Integer = 1
+
+        insertNum(btn1)
+
+    End Sub
+
+    'display numpad selection
+    Public Function enterNum(qtyText As String, btnNum As Integer)
+        Dim insertVal As String
+        Dim newNum As String = Convert.ToString(btnNum)
+
+        If qtyText = "0" Then
+            insertVal = 0 + newNum
+
+        Else
+            Dim currVal As String = qtyText
+
+            insertVal = currVal & newNum
+
+        End If
+
+        Return insertVal
+    End Function
+
+    Private Sub b2_Click(sender As Object, e As EventArgs) Handles b2.Click
+
+        'determine which numpad button click to display value
+        Dim btn2 As Integer = 2
+        insertNum(btn2)
+
+    End Sub
+
+    Private Sub ItemPrice_Click(sender As Object, e As EventArgs) Handles ItemPrice.Click
+
+        'customer item validation and open numpad to add price
+        openKey()
+
+        If itemDesc.Text IsNot "" Then
+
+            numPanel.Visible = True
+
+            numClick = 11
+
+        End If
+
+    End Sub
+
+    'numpad controllers
+    Public Sub insertNum(valNum As Integer)
+
+        If numClick = 1 Then
+
+            Dim val As String = qty1.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty1.Text = newVal
+
+        ElseIf numClick = 2 Then
+            Dim val As String = qty2.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty2.Text = newVal
+        ElseIf numClick = 3 Then
+            Dim val As String = qty3.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty3.Text = newVal
+        ElseIf numClick = 4 Then
+            Dim val As String = qty4.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty4.Text = newVal
+        ElseIf numClick = 5 Then
+            Dim val As String = qty5.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty5.Text = newVal
+        ElseIf numClick = 6 Then
+            Dim val As String = qty6.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty6.Text = newVal
+        ElseIf numClick = 7 Then
+            Dim val As String = qty7.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty7.Text = newVal
+        ElseIf numClick = 8 Then
+            Dim val As String = qty8.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty8.Text = newVal
+
+        ElseIf numClick = 9 Then
+            Dim val As String = qty9.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty9.Text = newVal
+        ElseIf numClick = 10 Then
+            Dim val As String = qty10.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            qty10.Text = newVal
+        ElseIf numClick = 11 Then
+
+            Dim val As String = ItemPrice.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            ItemPrice.Text = newVal
+        End If
+
+    End Sub
+
+    Private Sub b3_Click(sender As Object, e As EventArgs) Handles b3.Click
+        'determine which numpad button click to display value
+        Dim btn3 As Integer = 3
+        insertNum(btn3)
+    End Sub
+
+    Private Sub b4_Click(sender As Object, e As EventArgs) Handles b4.Click
+        'determine which numpad button click to display value
+        Dim btn4 As Integer = 4
+        insertNum(btn4)
+    End Sub
+
+    Private Sub b5_Click(sender As Object, e As EventArgs) Handles b5.Click
+        'determine which numpad button click to display value
+        Dim btn5 As Integer = 5
+        insertNum(btn5)
+    End Sub
+
+    Private Sub b6_Click(sender As Object, e As EventArgs) Handles b6.Click
+        'determine which numpad button click to display value
+        Dim btn6 As Integer = 6
+        insertNum(btn6)
+    End Sub
+
+    Private Sub b7_Click(sender As Object, e As EventArgs) Handles b7.Click
+        'determine which numpad button click to display value
+        Dim btn7 As Integer = 7
+        insertNum(btn7)
+    End Sub
+
+    Private Sub b8_Click(sender As Object, e As EventArgs) Handles b8.Click
+        'determine which numpad button click to display value
+        Dim btn8 As Integer = 8
+        insertNum(btn8)
+    End Sub
+
+    Private Sub b9_Click(sender As Object, e As EventArgs) Handles b9.Click
+        'determine which numpad button click to display value
+        Dim btn9 As Integer = 9
+        insertNum(btn9)
+    End Sub
+
+    Private Sub b0_Click(sender As Object, e As EventArgs) Handles b0.Click
+        'determine which numpad button click to display value
+        Dim btn0 As Integer = 0
+        insertNum(btn0)
+
+    End Sub
+
+    Private Sub numPanel_Leave(sender As Object, e As EventArgs) Handles numPanel.Leave
+        'hid numpad when not active
+        numPanel.Visible = False
+
+    End Sub
+
+    Private Sub bpoint_Click(sender As Object, e As EventArgs) Handles bpoint.Click
+
+        'display quantity values when decimal is added
+        If numClick = 1 Then
+
+            Dim newVal As String = decimalVal(qty1.Text)
+
+            qty1.Text = newVal
+
+        ElseIf numClick = 2 Then
+            Dim newVal As String = decimalVal(qty2.Text)
+
+            qty2.Text = newVal
+
+        ElseIf numClick = 3 Then
+            Dim newVal As String = decimalVal(qty3.Text)
+
+            qty3.Text = newVal
+
+        ElseIf numClick = 4 Then
+            Dim newVal As String = decimalVal(qty4.Text)
+
+            qty4.Text = newVal
+        ElseIf numClick = 5 Then
+            Dim newVal As String = decimalVal(qty5.Text)
+
+            qty5.Text = newVal
+        ElseIf numClick = 6 Then
+            Dim newVal As String = decimalVal(qty6.Text)
+
+            qty6.Text = newVal
+        ElseIf numClick = 7 Then
+            Dim newVal As String = decimalVal(qty7.Text)
+
+            qty7.Text = newVal
+        ElseIf numClick = 8 Then
+            Dim newVal As String = decimalVal(qty8.Text)
+
+            qty8.Text = newVal
+        ElseIf numClick = 9 Then
+            Dim newVal As String = decimalVal(qty9.Text)
+
+            qty9.Text = newVal
+        ElseIf numClick = 10 Then
+
+            Dim newVal As String = decimalVal(qty10.Text)
+
+            qty10.Text = newVal
+        ElseIf numClick = 11 Then
+
+            Dim newVal As String = decimalVal(ItemPrice.Text)
+
+            ItemPrice.Text = newVal
+
+        End If
+
+    End Sub
+
+    'determine display val for qty fields
+    Public Function decimalVal(value As String)
+        Dim val As String = value
+        Dim btnval As String = "."
+
+        Dim newVal As String = val & btnval
+
+        Return newVal
+    End Function
+
+    Private Sub cID_TextChanged(sender As Object, e As EventArgs) Handles cID.TextChanged
+
+        'display ticket panels when customer is selected
+        Panel2.Visible = True
+        Panel3.Visible = True
+
+    End Sub
+
+    Private Sub r1_Click(sender As Object, e As EventArgs)
+        item1.Text = ""
+        qty1.Text = 0
+
+        hideTot()
+
+    End Sub
+
+    Private Sub r2_Click(sender As Object, e As EventArgs) Handles r2.Click
+        item2.Text = ""
+        qty2.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r3_Click(sender As Object, e As EventArgs) Handles r3.Click
+        item3.Text = ""
+        qty3.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r4_Click(sender As Object, e As EventArgs) Handles r4.Click
+        item4.Text = ""
+        qty4.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r5_Click(sender As Object, e As EventArgs) Handles r5.Click
+        item5.Text = ""
+        qty5.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r6_Click(sender As Object, e As EventArgs) Handles r6.Click
+        item6.Text = ""
+        qty6.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r7_Click(sender As Object, e As EventArgs) Handles r7.Click
+        item7.Text = ""
+        qty7.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r8_Click(sender As Object, e As EventArgs) Handles r8.Click
+        item8.Text = ""
+        qty8.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r9_Click(sender As Object, e As EventArgs) Handles r9.Click
+        item9.Text = ""
+        qty9.Text = 0
+        hideTot()
+    End Sub
+
+    Private Sub r10_Click(sender As Object, e As EventArgs) Handles r10.Click
+        item10.Text = ""
+        qty10.Text = 0
+        hideTot()
+    End Sub
+
+    'hide total and buttons for validation
+    Public Sub hideTot()
+        total.Visible = False
+        totPrice.Visible = False
+        closeTicket.Visible = False
+    End Sub
+    Private Sub bback_Click(sender As Object, e As EventArgs) Handles bback.Click
+
+        If numClick = 1 Then
+
+            Dim val As String = qty1.Text
+            Dim newVal As String = backBtn(val)
+
+            qty1.Text = newVal
+
+        ElseIf numClick = 2 Then
+            Dim val As String = qty2.Text
+            Dim newVal As String = backBtn(val)
+
+            qty2.Text = newVal
+
+        ElseIf numClick = 3 Then
+            Dim val As String = qty3.Text
+            Dim newVal As String = backBtn(val)
+
+            qty3.Text = newVal
+        ElseIf numClick = 4 Then
+            Dim val As String = qty4.Text
+            Dim newVal As String = backBtn(val)
+
+            qty4.Text = newVal
+        ElseIf numClick = 5 Then
+            Dim val As String = qty5.Text
+            Dim newVal As String = backBtn(val)
+
+            qty5.Text = newVal
+        ElseIf numClick = 6 Then
+            Dim val As String = qty6.Text
+            Dim newVal As String = backBtn(val)
+
+            qty6.Text = newVal
+        ElseIf numClick = 7 Then
+            Dim val As String = qty7.Text
+
+            Dim newVal As String = backBtn(val)
+
+            qty7.Text = newVal
+        ElseIf numClick = 8 Then
+            Dim val As String = qty8.Text
+            Dim newVal As String = backBtn(val)
+
+            qty8.Text = newVal
+        ElseIf numClick = 9 Then
+            Dim val As String = qty9.Text
+            Dim newVal As String = backBtn(val)
+
+            qty9.Text = newVal
+        ElseIf numClick = 10 Then
+            Dim val As String = qty10.Text
+            Dim newVal As String = backBtn(val)
+
+            qty10.Text = newVal
+        ElseIf numClick = 11 Then
+
+            Dim val As String = ItemPrice.Text
+            Dim newVal As String = backBtn(val)
+
+
+            ItemPrice.Text = newVal
+        End If
+
+    End Sub
+
+    'determine values with back button on numpad
+    Public Function backBtn(value As String)
+        Dim newVal As String
+
+        Try
+            newVal = Mid(value, 1, Len(value) - 1)
+        Catch ex As Exception
+        End Try
+
+        Return newVal
+    End Function
+
+    'disable osk for numpad display
+    Public Sub openKey()
+
+        Dim old As Long
+
+        If Environment.Is64BitOperatingSystem Then
+            If Wow64DisableWow64FsRedirection(old) Then
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+                Wow64EnableWow64FsRedirection(old)
+
+            Else
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+            End If
+        End If
+
+    End Sub
+
+    'enlarge customer picture onclick
+    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+        Dim reziseR As New resized
+
+        reziseR.Size = New Size(rWidth, rHeight)
+        reziseR.PictureBox1.Size = New Size(rWidth, rHeight)
+        reziseR.PictureBox1.Image = rImage
+
+
+        reziseR.StartPosition = FormStartPosition.Manual
+        reziseR.DesktopLocation = Me.DesktopLocation
+
+        reziseR.Show()
+    End Sub
+
+    Private Sub sBtn_Click(sender As Object, e As EventArgs) Handles sBtn.Click
+
+        'search customer name in db by name insert
+        Dim cName As String = TextBox1.Text
+
+        Try
+            'customer variables
+            Dim found As String
+
+            For Each dr As DataRow In FinalFinal.Customers.Rows
+
+                If dr("Name") = cName Then
+                    found = dr("ID_customer")
+
+                    cID.Text = found
+
+                End If
+
+            Next
+
+        Catch ex As Exception
+            MsgBox("Customer not found. Check Name and try again.")
+        End Try
+
+        If cID.Text Is "" Then
+            MsgBox("Customer not found. Try again")
+        End If
+
+    End Sub
+End Class
