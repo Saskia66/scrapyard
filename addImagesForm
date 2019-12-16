@@ -1,0 +1,411 @@
+Public Class AddImg
+
+    Dim whichBtn As Integer
+    Dim imgPath As String
+    Dim ticketNr As Integer
+
+    Private Sub Purchases_Click(sender As Object, e As EventArgs) Handles Purchases.Click
+
+        'display add image for items elements
+        myImage.Image = Nothing
+        whichBtn = 1
+
+        TextBox1.Visible = False
+        AddBtn.Visible = False
+        viewBtn.Visible = False
+
+        ticketL.Visible = False
+        ticketCombo.Visible = False
+        itemL.Visible = False
+        itemCombo.Visible = False
+
+        Panel1.Visible = True
+        Button2.Visible = True
+        Label1.Visible = True
+        TextBox2.Visible = True
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        'display add image for customer elements
+        whichBtn = 2
+        myImage.Image = Nothing
+        nameL.Visible = False
+
+        TextBox1.Visible = False
+        AddBtn.Visible = False
+        viewBtn.Visible = False
+
+        Button2.Visible = False
+        Label1.Visible = False
+        TextBox2.Visible = False
+        TextBox3.Visible = False
+
+        Panel1.Visible = True
+        ticketL.Visible = True
+        ticketCombo.Visible = True
+        itemL.Visible = True
+        itemCombo.Visible = True
+
+    End Sub
+
+
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles AddBtn.Click
+
+        'open folders for navigation to images for path selection
+        If (OpenFileDialog1.ShowDialog() = DialogResult.OK) Then
+
+            TextBox1.Text = OpenFileDialog1.SafeFileName
+
+        End If
+    End Sub
+
+    Private Sub viewBtn_Click(sender As Object, e As EventArgs) Handles viewBtn.Click
+
+        Dim selImage As String = TextBox1.Text
+
+        If TextBox1.Text IsNot "" Then
+
+            'select customer image to view before adding to db
+            If whichBtn = 1 Then
+                Dim path As String = "C:\Users\ScrapVM\Pictures\CUSTOMERS\"
+
+                Dim final As String = path + selImage
+
+                Dim myImg As Image = Image.FromFile(final)
+
+                Dim bmp As Bitmap = New Bitmap(myImg, 200, 210)
+
+                Dim finalImg As Image = bmp
+
+                myImage.Image = finalImg
+
+                imgPath = final
+
+                'select item image to view before adding to db
+            ElseIf whichBtn = 2 Then
+
+                Dim path As String = "C:\Users\ScrapVM\Pictures\ITEMS\"
+
+                Dim final As String = path + selImage
+
+                Dim myImg As Image = Image.FromFile(final)
+
+                Dim bmp As Bitmap = New Bitmap(myImg, 200, 210)
+
+                Dim finalImg As Image = bmp
+
+                myImage.Image = finalImg
+
+                imgPath = final
+
+            End If
+        End If
+
+
+
+    End Sub
+
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles upBtn.Click
+
+        Dim cusID As String = TextBox2.Text
+        Try
+            Dim finID As Integer = Convert.ToInt64(cusID)
+        Catch ex As Exception
+        End Try
+
+        Dim tickId As String = ticketCombo.Text
+        Dim itemId As String = itemCombo.Text
+
+        'prepare and try insert customer image to db
+        If whichBtn = 1 Then
+
+            Try
+
+                Dim image As System.Drawing.Image = System.Drawing.Image.FromFile(imgPath)
+
+                Dim imageConverter As New ImageConverter()
+
+                Dim imageByte As Byte() = DirectCast(imageConverter.ConvertTo(image, GetType(Byte())), Byte())
+
+                Me.CustomersTableAdapter.UpdateQuery1(imageByte, cusID)
+
+                MsgBox("Image Added")
+                Me.Close()
+
+            Catch ex As Exception
+                MsgBox("Wrong Filepath")
+            End Try
+
+        ElseIf whichBtn = 2 Then
+
+            'prepare and try insert item image to db
+            Try
+                Dim finTicket As Integer = Integer.Parse(tickId)
+                Dim finItem As Integer = Integer.Parse(itemId)
+                Dim image As System.Drawing.Image = System.Drawing.Image.FromFile(imgPath)
+
+                Dim imageConverter As New ImageConverter()
+
+                Dim imageByte As Byte() = DirectCast(imageConverter.ConvertTo(image, GetType(Byte())), Byte())
+
+                Me.SalesTableAdapter.UpdateQuery3(imageByte, finTicket, finItem)
+
+                MsgBox("Image Added")
+                Me.Close()
+
+            Catch ex As Exception
+                MsgBox("Wrong Filepath")
+            End Try
+
+        End If
+
+
+    End Sub
+
+    Private Sub AddImg_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'ImageData.Tickets' table. You can move, or remove it, as needed.
+        Me.TicketsTableAdapter.Fill(Me.ImageData.Tickets)
+        'TODO: This line of code loads data into the 'ImageData.Sales' table. You can move, or remove it, as needed.
+        Me.SalesTableAdapter.Fill(Me.ImageData.Sales)
+        'TODO: This line of code loads data into the 'ImageData.Items' table. You can move, or remove it, as needed.
+        Me.ItemsTableAdapter.Fill(Me.ImageData.Items)
+        'TODO: This line of code loads data into the 'ImageData.Customers' table. You can move, or remove it, as needed.
+        Me.CustomersTableAdapter.Fill(Me.ImageData.Customers)
+
+    End Sub
+
+    Private Sub nameTxt_SelectedIndexChanged(sender As Object, e As EventArgs)
+
+        TextBox1.Visible = True
+        AddBtn.Visible = True
+        viewBtn.Visible = True
+
+    End Sub
+
+    Private Sub itemCombo_SelectedIndexChanged(sender As Object, e As EventArgs) Handles itemCombo.SelectedIndexChanged
+
+        TextBox1.Visible = True
+        AddBtn.Visible = True
+        viewBtn.Visible = True
+
+    End Sub
+
+    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
+        upBtn.Visible = True
+    End Sub
+
+    Private Sub ticketCombo_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ticketCombo.SelectedIndexChanged
+
+        'clearing ticket numbers for new ticket selection to find items
+        itemCombo.Items.Clear()
+        Try
+            ticketNr = Integer.Parse(ticketCombo.Text)
+        Catch ex As Exception
+
+        End Try
+
+        'items variables
+        Dim list As New List(Of Integer)
+
+        Dim n As Integer = 0
+
+        'find items by ticket number
+        For Each dr As DataRow In ImageData.Sales.Rows
+
+            If dr("ticket_ID") = ticketNr Then
+
+                list.Add(dr("Item_ID"))
+
+            End If
+            n += 1
+        Next
+
+        'add items into combobox from db
+        For Each item As Integer In list
+
+            Dim val As String = Convert.ToString(item)
+            itemCombo.Items.Add(item)
+
+        Next
+
+    End Sub
+
+    Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click
+
+
+        Dim cId As String = TextBox2.Text
+
+        Try
+
+            'customer variables
+
+            Dim found As String
+
+            'find customer by id number
+            For Each dr As DataRow In ImageData.Customers.Rows
+
+                If dr("ID_num") = cId Then
+                    found = dr("Name")
+                    nameL.Visible = True
+                    TextBox3.Visible = True
+                    TextBox1.Visible = True
+                    AddBtn.Visible = True
+                    viewBtn.Visible = True
+                    TextBox3.Text = found
+                End If
+
+            Next
+
+        Catch ex As Exception
+            MsgBox("Customer not found. Check ID number and try again.")
+        End Try
+
+        If TextBox3.Text Is "" Then
+            MsgBox("Customer not found. Check ID number and try again.")
+        End If
+
+    End Sub
+
+    Private Sub TextBox2_Click(sender As Object, e As EventArgs) Handles TextBox2.Click
+
+        numPanel.Visible = True
+        openKey()
+
+    End Sub
+
+    Private Sub closeBtn_Click(sender As Object, e As EventArgs) Handles closeBtn.Click
+        numPanel.Visible = False
+
+    End Sub
+
+    Private Sub numPanel_Leave(sender As Object, e As EventArgs) Handles numPanel.Leave
+        numPanel.Visible = False
+
+    End Sub
+
+    'numpad code
+    Public Function enterNum(qtyText As String, btnNum As Integer)
+        Dim insertVal As String
+        Dim newNum As String = Convert.ToString(btnNum)
+
+        If qtyText = "0" Then
+            insertVal = 0 & newNum
+
+        Else
+            Dim currVal As String = qtyText
+
+            insertVal = currVal & newNum
+
+        End If
+
+        Return insertVal
+    End Function
+
+    Public Sub insertNum(valNum As Integer)
+        Dim val As String = TextBox2.Text
+        Dim btnval As Integer = valNum
+
+        Dim newVal As String = enterNum(val, btnval)
+
+        TextBox2.Text = newVal
+
+    End Sub
+
+    Private Sub b1_Click(sender As Object, e As EventArgs) Handles b1.Click
+        Dim btn1 As Integer = 1
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b2_Click(sender As Object, e As EventArgs) Handles b2.Click
+        Dim btn1 As Integer = 2
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b3_Click(sender As Object, e As EventArgs) Handles b3.Click
+        Dim btn1 As Integer = 3
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b4_Click(sender As Object, e As EventArgs) Handles b4.Click
+        Dim btn1 As Integer = 4
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b5_Click(sender As Object, e As EventArgs) Handles b5.Click
+        Dim btn1 As Integer = 5
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b6_Click(sender As Object, e As EventArgs) Handles b6.Click
+        Dim btn1 As Integer = 6
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b7_Click(sender As Object, e As EventArgs) Handles b7.Click
+        Dim btn1 As Integer = 7
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b8_Click(sender As Object, e As EventArgs) Handles b8.Click
+        Dim btn1 As Integer = 8
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b9_Click(sender As Object, e As EventArgs) Handles b9.Click
+        Dim btn1 As Integer = 9
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b0_Click(sender As Object, e As EventArgs) Handles b0.Click
+        Dim btn1 As Integer = 0
+        insertNum(btn1)
+    End Sub
+
+    Private Sub bback_Click(sender As Object, e As EventArgs) Handles bback.Click
+
+        Dim val As String = TextBox2.Text
+        Dim newVal As String
+
+        Try
+            newVal = Mid(val, 1, Len(val) - 1)
+        Catch ex As Exception
+        End Try
+
+        TextBox2.Text = newVal
+
+    End Sub
+
+    Declare Function Wow64DisableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+    Declare Function Wow64EnableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+
+    'disbale osk for numpad
+    Public Sub openKey()
+
+        Dim old As Long
+
+        If Environment.Is64BitOperatingSystem Then
+            If Wow64DisableWow64FsRedirection(old) Then
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+                Wow64EnableWow64FsRedirection(old)
+
+            Else
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+            End If
+        End If
+
+    End Sub
+End Class
