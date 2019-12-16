@@ -1,0 +1,254 @@
+Public Class Form4
+
+    Public selecItem As String
+
+
+
+    Private Sub ItemsBindingNavigatorSaveItem_Click(sender As Object, e As EventArgs)
+        Me.Validate()
+        Me.ItemsBindingSource.EndEdit()
+        Me.TableAdapterManager.UpdateAll(Me.ScrapDataSet)
+
+    End Sub
+
+    Private Sub Form4_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'ScrapDataSet2.Items' table. You can move, or remove it, as needed.
+        Me.ItemsTableAdapter1.Fill(Me.ScrapDataSet2.Items)
+        'TODO: This line of code loads data into the 'ScrapDataSet.Sales' table. You can move, or remove it, as needed.
+        Me.SalesTableAdapter.Fill(Me.ScrapDataSet.Sales)
+        'TODO: This line of code loads data into the 'ScrapDataSet.Items' table. You can move, or remove it, as needed.
+        Me.ItemsTableAdapter.Fill(Me.ScrapDataSet.Items)
+
+    End Sub
+
+
+
+    Private Function fieldOne() As String
+        Throw New NotImplementedException()
+    End Function
+
+    Public Sub Button11_Click_1(sender As Object, e As EventArgs) Handles Button11.Click
+
+        'get selected value
+        Dim val As String = ComboBox1.Text
+
+        'new ticket form
+        Dim btn As Integer = Form1.tickets.btnClick
+
+        'new sales form
+        Dim exBtn As Integer = Form1.ExTickets.btnClick
+
+
+        'determine which textbox will receive the value Tickets
+        If btn = 1 Then
+            Form1.tickets.item1.Text = val
+            closeForm()
+        ElseIf btn = 2 Then
+            Form1.tickets.item2.Text = val
+            closeForm()
+        ElseIf btn = 3 Then
+            Form1.tickets.item3.Text = val
+            closeForm()
+        ElseIf btn = 4 Then
+            Form1.tickets.item4.Text = val
+            closeForm()
+        ElseIf btn = 5 Then
+            Form1.tickets.item5.Text = val
+            closeForm()
+        ElseIf btn = 6 Then
+            Form1.tickets.item6.Text = val
+            closeForm()
+        ElseIf btn = 7 Then
+            Form1.tickets.item7.Text = val
+            closeForm()
+        ElseIf btn = 8 Then
+            Form1.tickets.item8.Text = val
+            closeForm()
+        ElseIf btn = 9 Then
+            Form1.tickets.item9.Text = val
+            closeForm()
+        ElseIf btn = 10 Then
+            Form1.tickets.item10.Text = val
+            closeForm()
+
+        End If
+
+        'determine which textbox will receive the value exTickets
+        If exBtn = 1 Then
+            Form1.ExTickets.item1.Text = val
+            closeForm()
+        ElseIf exBtn = 2 Then
+            Form1.ExTickets.item2.Text = val
+            closeForm()
+        ElseIf exBtn = 3 Then
+            Form1.ExTickets.item3.Text = val
+            closeForm()
+        ElseIf exBtn = 4 Then
+            Form1.ExTickets.item4.Text = val
+            closeForm()
+        ElseIf exBtn = 5 Then
+            Form1.ExTickets.item5.Text = val
+            closeForm()
+        ElseIf exBtn = 6 Then
+            Form1.ExTickets.item6.Text = val
+            closeForm()
+        ElseIf exBtn = 7 Then
+            Form1.ExTickets.item7.Text = val
+            closeForm()
+        ElseIf exBtn = 8 Then
+            Form1.ExTickets.item8.Text = val
+            closeForm()
+        ElseIf exBtn = 9 Then
+            Form1.ExTickets.item9.Text = val
+            closeForm()
+        ElseIf exBtn = 10 Then
+            Form1.ExTickets.item10.Text = val
+            closeForm()
+
+        End If
+
+
+    End Sub
+
+    Public Sub closeForm()
+        Me.Close()
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim textVal As String = "CU MIXED"
+
+        enterVal(textVal)
+
+
+    End Sub
+
+    Public Sub enterVal(val As String)
+
+
+        'new ticket form
+        Dim btn As Integer = Form1.tickets.btnClick
+
+        'new sales form
+        Dim exBtn As Integer = Form1.ExTickets.btnClick
+
+
+        'determine which textbox will receive the value Tickets
+        If btn = 1 Then
+            Form1.tickets.item1.Text = val
+            closeForm()
+        ElseIf btn = 2 Then
+            Form1.tickets.item2.Text = val
+            closeForm()
+        ElseIf btn = 3 Then
+            Form1.tickets.item3.Text = val
+            closeForm()
+        ElseIf btn = 4 Then
+            Form1.tickets.item4.Text = val
+            closeForm()
+        ElseIf btn = 5 Then
+            Form1.tickets.item5.Text = val
+            closeForm()
+        ElseIf btn = 6 Then
+            Form1.tickets.item6.Text = val
+            closeForm()
+        ElseIf btn = 7 Then
+            Form1.tickets.item7.Text = val
+            closeForm()
+        ElseIf btn = 8 Then
+            Form1.tickets.item8.Text = val
+            closeForm()
+        ElseIf btn = 9 Then
+            Form1.tickets.item9.Text = val
+            closeForm()
+        ElseIf btn = 10 Then
+            Form1.tickets.item10.Text = val
+            closeForm()
+
+        End If
+
+        'determine which textbox will receive the value exTickets
+        If exBtn = 1 Then
+            Form1.ExTickets.item1.Text = val
+            closeForm()
+        ElseIf exBtn = 2 Then
+            Form1.ExTickets.item2.Text = val
+            closeForm()
+        ElseIf exBtn = 3 Then
+            Form1.ExTickets.item3.Text = val
+            closeForm()
+        ElseIf exBtn = 4 Then
+            Form1.ExTickets.item4.Text = val
+            closeForm()
+        ElseIf exBtn = 5 Then
+            Form1.ExTickets.item5.Text = val
+            closeForm()
+        ElseIf exBtn = 6 Then
+            Form1.ExTickets.item6.Text = val
+            closeForm()
+        ElseIf exBtn = 7 Then
+            Form1.ExTickets.item7.Text = val
+            closeForm()
+        ElseIf exBtn = 8 Then
+            Form1.ExTickets.item8.Text = val
+            closeForm()
+        ElseIf exBtn = 9 Then
+            Form1.ExTickets.item9.Text = val
+            closeForm()
+        ElseIf exBtn = 10 Then
+            Form1.ExTickets.item10.Text = val
+            closeForm()
+
+        End If
+
+    End Sub
+
+    'buttons for item values if combobox is not used
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Dim textVal As String = "BRASS HEAVY"
+
+        enterVal(textVal)
+
+    End Sub
+
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+        Dim textVal As String = "BATT"
+
+        enterVal(textVal)
+    End Sub
+
+    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+        Dim textVal As String = "LEAD"
+
+        enterVal(textVal)
+    End Sub
+
+    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+        Dim textVal As String = "ZINC FE"
+
+        enterVal(textVal)
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        Dim textVal As String = "ALU CASTING"
+
+        enterVal(textVal)
+    End Sub
+
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        Dim textVal As String = "ALU CANS"
+
+        enterVal(textVal)
+    End Sub
+
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+        Dim textVal As String = "S/S 304"
+
+        enterVal(textVal)
+    End Sub
+
+    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+        Dim textVal As String = "ALU OLD ROLLED"
+
+        enterVal(textVal)
+    End Sub
+End Class
