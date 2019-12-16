@@ -1,0 +1,209 @@
+Public Class updPrices
+
+    Public selectedVal As String
+    Private Sub updPrices_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'FinalFinal.Items' table. You can move, or remove it, as needed.
+        Me.ItemsTableAdapter1.Fill(Me.FinalFinal.Items)
+        'TODO: This line of code loads data into the 'ScrapDataSet2.Items' table. You can move, or remove it, as needed.
+        Me.ItemsTableAdapter.Fill(Me.ScrapDataSet2.Items)
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+        Dim newVal As String = upAmt.Text
+        Dim finalVal As Decimal
+
+        'commit price changes to db
+        Try
+            finalVal = Convert.ToDecimal(newVal)
+            Me.ItemsTableAdapter1.updatePrice(finalVal, selectedVal)
+            MsgBox("Updated Price")
+
+            Me.Close()
+        Catch
+            MsgBox("Please ensure new amount is entered.")
+        End Try
+
+    End Sub
+
+    Public Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
+
+
+        selectedVal = ComboBox1.Text
+
+        'find item current price
+        Dim foundVal As Decimal
+        Try
+
+            foundVal = Me.ItemsTableAdapter1.itemPrice(selectedVal)
+        Catch ex As Exception
+        End Try
+
+        Try
+            TextBox1.Text = Math.Round(foundVal, 2)
+        Catch ex As Exception
+        End Try
+
+
+
+    End Sub
+
+    Private Sub TextBox2_Click(sender As Object, e As EventArgs) Handles upAmt.Click
+
+        numPanel.Visible = True
+        openKey()
+
+    End Sub
+
+    Private Sub numPanel_Leave(sender As Object, e As EventArgs) Handles numPanel.Leave
+
+        numPanel.Visible = False
+
+    End Sub
+
+    Private Sub bpoint_Click(sender As Object, e As EventArgs) Handles bpoint.Click
+
+        Dim val As String = upAmt.Text
+        Dim btnval As String = "."
+
+        Dim newVal As String = val & btnval
+
+        upAmt.Text = newVal
+    End Sub
+
+    Private Sub closeBtn_Click(sender As Object, e As EventArgs) Handles closeBtn.Click
+        numPanel.Visible = False
+
+    End Sub
+    Private Sub bback_Click(sender As Object, e As EventArgs) Handles bback.Click
+
+        Dim val As String = upAmt.Text
+        Dim newVal As String
+
+        Try
+
+            newVal = Mid(val, 1, Len(val) - 1)
+        Catch ex As Exception
+        End Try
+
+        upAmt.Text = newVal
+
+    End Sub
+
+    Private Sub b1_Click(sender As Object, e As EventArgs) Handles b1.Click
+
+        Dim btnN As Integer = 1
+
+        insertNum(btnN)
+
+    End Sub
+
+    Private Sub b2_Click(sender As Object, e As EventArgs) Handles b2.Click
+        Dim btnN As Integer = 2
+
+        insertNum(btnN)
+
+    End Sub
+
+    Private Sub b3_Click(sender As Object, e As EventArgs) Handles b3.Click
+        Dim btnN As Integer = 3
+
+        insertNum(btnN)
+
+    End Sub
+
+    'custom numpad 
+    Public Sub insertNum(valB As Integer)
+
+        Dim val As String = upAmt.Text
+        Dim btnval As Integer = valB
+        Dim newVal As String
+
+        If upAmt.Text = "" Then
+            newVal = btnval
+
+        Else
+            Dim currVal As String = val
+
+            newVal = currVal & btnval
+
+        End If
+
+        upAmt.Text = newVal
+
+    End Sub
+
+    Private Sub b4_Click(sender As Object, e As EventArgs) Handles b4.Click
+        Dim btnN As Integer = 4
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b5_Click(sender As Object, e As EventArgs) Handles b5.Click
+        Dim btnN As Integer = 5
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b6_Click(sender As Object, e As EventArgs) Handles b6.Click
+        Dim btnN As Integer = 6
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b7_Click(sender As Object, e As EventArgs) Handles b7.Click
+        Dim btnN As Integer = 7
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b8_Click(sender As Object, e As EventArgs) Handles b8.Click
+        Dim btnN As Integer = 8
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b9_Click(sender As Object, e As EventArgs) Handles b9.Click
+        Dim btnN As Integer = 9
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b0_Click(sender As Object, e As EventArgs) Handles b0.Click
+        Dim btnN As Integer = 0
+
+        insertNum(btnN)
+    End Sub
+
+    Declare Function Wow64DisableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+    Declare Function Wow64EnableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+    'disable osk for numpad
+    Public Sub openKey()
+
+        Dim old As Long
+
+        If Environment.Is64BitOperatingSystem Then
+            If Wow64DisableWow64FsRedirection(old) Then
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+                Wow64EnableWow64FsRedirection(old)
+
+            Else
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+            End If
+        End If
+
+    End Sub
+End Class
