@@ -1,0 +1,245 @@
+Public Class Customer
+
+    Public txtClick As Integer
+    Private Sub addC_Click(sender As Object, e As EventArgs) Handles addC.Click
+
+        'customer details variables
+        Dim cusName As String = nameC.Text
+        Dim cusAdd As String = address.Text
+        Dim cusId As String = idNum.Text
+        Dim checkId As Integer = 0
+
+        Dim cusC As String = cusCell.Text
+        Dim regDate As Date = Date.Now()
+        Dim comm As String = commTxt.Text
+
+
+        'validate customer inputs
+        'check if fields have values
+        If cusName Is "" And cusId Is "" Then
+            MsgBox("Please ensure a Customer Name and ID is entered ")
+
+
+        Else
+            'check if id number is numeric
+            Try
+
+                checkId = Convert.ToInt32(cusId)
+
+                'check if 13 digits
+                If cusId.Length = 13 Then
+
+                    'enter customer data into db
+                    Try
+                        Me.CustomersTableAdapter1.Insert(cusName, cusAdd, cusId, regDate, cusC, comm)
+
+                        Me.CustomersTableAdapter1.Update(Me.FinalFinal.Customers)
+
+                        MsgBox("Customer Added")
+                    Catch ex As Exception
+                        MsgBox("Customer already Exists")
+                    End Try
+                End If
+
+
+            Catch ex As Exception
+                MsgBox("Ensure customer ID is numbers only")
+            End Try
+
+            'return to ticket form
+            Form1.tickets.GetCustomerId.Clear()
+
+            Form1.tickets.CustomersTableAdapter2.Fill(Form1.tickets.GetCustomerId.Customers)
+
+            Form1.tickets.NameComboBox.DataSource = Form1.tickets.CustomersBindingSource4
+            Form1.tickets.NameComboBox.DisplayMember = "Name"
+
+            Me.Close()
+
+        End If
+
+    End Sub
+
+    Private Sub Customer_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'AddCustomer.Customers' table. You can move, or remove it, as needed.
+        Me.CustomersTableAdapter2.Fill(Me.AddCustomer.Customers)
+        'TODO: This line of code loads data into the 'FinalFinal.Customers' table. You can move, or remove it, as needed.
+        Me.CustomersTableAdapter1.Fill(Me.FinalFinal.Customers)
+
+    End Sub
+
+
+
+    Private Sub cusCell_Click(sender As Object, e As EventArgs) Handles cusCell.Click
+        numPanel.Visible = True
+        txtClick = 2
+        openKey()
+    End Sub
+
+    Private Sub closeBtn_Click(sender As Object, e As EventArgs) Handles closeBtn.Click
+        numPanel.Visible = False
+
+    End Sub
+
+    Private Sub numPanel_Leave(sender As Object, e As EventArgs) Handles numPanel.Leave
+        numPanel.Visible = False
+
+    End Sub
+
+    Public Function enterNum(qtyText As String, btnNum As Integer)
+        Dim insertVal As String
+        Dim newNum As String = Convert.ToString(btnNum)
+
+        If qtyText = "0" Then
+            insertVal = 0 & newNum
+
+        Else
+            Dim currVal As String = qtyText
+
+            insertVal = currVal & newNum
+
+        End If
+
+        Return insertVal
+    End Function
+    'custom numpad
+    Public Sub insertNum(valNum As Integer)
+
+        If txtClick = 1 Then
+
+            Dim val As String = idNum.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            idNum.Text = newVal
+
+        ElseIf txtClick = 2 Then
+            Dim val As String = cusCell.Text
+            Dim btnval As Integer = valNum
+
+            Dim newVal As String = enterNum(val, btnval)
+
+            cusCell.Text = newVal
+        End If
+    End Sub
+
+    Private Sub b1_Click(sender As Object, e As EventArgs) Handles b1.Click
+        Dim btn1 As Integer = 1
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b2_Click(sender As Object, e As EventArgs) Handles b2.Click
+        Dim btn1 As Integer = 2
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b3_Click(sender As Object, e As EventArgs) Handles b3.Click
+        Dim btn1 As Integer = 3
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b4_Click(sender As Object, e As EventArgs) Handles b4.Click
+        Dim btn1 As Integer = 4
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b5_Click(sender As Object, e As EventArgs) Handles b5.Click
+        Dim btn1 As Integer = 5
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b6_Click(sender As Object, e As EventArgs) Handles b6.Click
+        Dim btn1 As Integer = 6
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b7_Click(sender As Object, e As EventArgs) Handles b7.Click
+        Dim btn1 As Integer = 7
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b8_Click(sender As Object, e As EventArgs) Handles b8.Click
+        Dim btn1 As Integer = 8
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b9_Click(sender As Object, e As EventArgs) Handles b9.Click
+        Dim btn1 As Integer = 9
+        insertNum(btn1)
+    End Sub
+
+    Private Sub b0_Click(sender As Object, e As EventArgs) Handles b0.Click
+        Dim btn1 As Integer = 0
+        insertNum(btn1)
+    End Sub
+
+    Private Sub idNum_Click(sender As Object, e As EventArgs) Handles idNum.Click
+        numPanel.Visible = True
+        txtClick = 1
+        openKey()
+    End Sub
+
+    Private Sub bback_Click(sender As Object, e As EventArgs) Handles bback.Click
+
+        If txtClick = 1 Then
+
+            Dim val As String = idNum.Text
+            Dim newVal As String
+
+            Try
+                newVal = Mid(val, 1, Len(val) - 1)
+            Catch ex As Exception
+            End Try
+
+            idNum.Text = newVal
+
+        ElseIf txtClick = 2 Then
+            Dim val As String = cusCell.Text
+            Dim newVal As String
+
+            Try
+                newVal = Mid(val, 1, Len(val) - 1)
+            Catch ex As Exception
+            End Try
+
+            cusCell.Text = newVal
+        End If
+
+
+    End Sub
+
+    Declare Function Wow64DisableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+    Declare Function Wow64EnableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+
+    'disbale osk for numpad
+    Public Sub openKey()
+
+        Dim old As Long
+
+        If Environment.Is64BitOperatingSystem Then
+            If Wow64DisableWow64FsRedirection(old) Then
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+                Wow64EnableWow64FsRedirection(old)
+
+            Else
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+            End If
+        End If
+
+    End Sub
+
+
+End Class
