@@ -1,0 +1,205 @@
+Public Class Purchases1
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+        'purchases variables
+        Dim textDec As String = TextBox1.Text
+        Dim textAmt As String = purchAmt.Text
+        Dim finAmt As Decimal
+        Dim purDate As Date = purchDate.SelectionRange.Start.ToString
+
+        'validate fields
+        If textDec Is "" Then
+
+            'MsgBox("Please enter Description")
+
+        Else
+            'insert purchase details into db
+            Try
+                finAmt = Convert.ToDecimal(textAmt)
+                Me.PurchasesTableAdapter.Insert(textDec, finAmt, purDate)
+                MsgBox("Purchase Added.")
+                Me.Close()
+
+            Catch ex As Exception
+
+                MsgBox("Please ensure amount is numbers only")
+
+            End Try
+
+        End If
+
+    End Sub
+
+    Private Sub PurchasesBindingNavigatorSaveItem_Click(sender As Object, e As EventArgs)
+        Me.Validate()
+        Me.PurchasesBindingSource.EndEdit()
+        Me.TableAdapterManager.UpdateAll(Me.FinalFinal)
+
+    End Sub
+
+    Private Sub Purchases1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'FinalFinal.Purchases' table. You can move, or remove it, as needed.
+        Me.PurchasesTableAdapter.Fill(Me.FinalFinal.Purchases)
+
+    End Sub
+
+    'numpad code
+    Private Sub numPanel_Leave(sender As Object, e As EventArgs) Handles numPanel.Leave
+
+        numPanel.Visible = False
+
+    End Sub
+
+    Private Sub bpoint_Click(sender As Object, e As EventArgs) Handles bpoint.Click
+
+        Dim val As String = purchAmt.Text
+        Dim btnval As String = "."
+
+        Dim newVal As String = val & btnval
+
+        purchAmt.Text = newVal
+    End Sub
+
+    Private Sub closeBtn_Click(sender As Object, e As EventArgs) Handles closeBtn.Click
+        numPanel.Visible = False
+
+    End Sub
+
+    Private Sub purchAmt_Click(sender As Object, e As EventArgs) Handles purchAmt.Click
+
+        numPanel.Visible = True
+        openKey()
+
+    End Sub
+
+    Private Sub bback_Click(sender As Object, e As EventArgs) Handles bback.Click
+
+        Dim val As String = purchAmt.Text
+        Dim newVal As String
+
+        Try
+
+            newVal = Mid(val, 1, Len(val) - 1)
+        Catch ex As Exception
+        End Try
+
+        purchAmt.Text = newVal
+
+    End Sub
+
+    Private Sub b1_Click(sender As Object, e As EventArgs) Handles b1.Click
+
+        Dim btnN As Integer = 1
+
+        insertNum(btnN)
+
+    End Sub
+
+    Private Sub b2_Click(sender As Object, e As EventArgs) Handles b2.Click
+        Dim btnN As Integer = 2
+
+        insertNum(btnN)
+
+    End Sub
+
+    Private Sub b3_Click(sender As Object, e As EventArgs) Handles b3.Click
+        Dim btnN As Integer = 3
+
+        insertNum(btnN)
+
+    End Sub
+
+    Public Sub insertNum(valB As Integer)
+
+        Dim val As String = purchAmt.Text
+        Dim btnval As Integer = valB
+        Dim newVal As String
+
+        If purchAmt.Text = "" Then
+            newVal = btnval
+
+        Else
+            Dim currVal As String = val
+
+            newVal = currVal & btnval
+
+        End If
+
+        purchAmt.Text = newVal
+
+    End Sub
+
+    Private Sub b4_Click(sender As Object, e As EventArgs) Handles b4.Click
+        Dim btnN As Integer = 4
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b5_Click(sender As Object, e As EventArgs) Handles b5.Click
+        Dim btnN As Integer = 5
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b6_Click(sender As Object, e As EventArgs) Handles b6.Click
+        Dim btnN As Integer = 6
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b7_Click(sender As Object, e As EventArgs) Handles b7.Click
+        Dim btnN As Integer = 7
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b8_Click(sender As Object, e As EventArgs) Handles b8.Click
+        Dim btnN As Integer = 8
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b9_Click(sender As Object, e As EventArgs) Handles b9.Click
+        Dim btnN As Integer = 9
+
+        insertNum(btnN)
+    End Sub
+
+    Private Sub b0_Click(sender As Object, e As EventArgs) Handles b0.Click
+        Dim btnN As Integer = 0
+
+        insertNum(btnN)
+    End Sub
+
+    Declare Function Wow64DisableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+    Declare Function Wow64EnableWow64FsRedirection Lib "kernel32" (ByRef oldvalue As Long) As Boolean
+
+    'disable osk for numpad
+    Public Sub openKey()
+
+        Dim old As Long
+
+        If Environment.Is64BitOperatingSystem Then
+            If Wow64DisableWow64FsRedirection(old) Then
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+                Wow64EnableWow64FsRedirection(old)
+
+            Else
+                Dim myproc As Process() = Process.GetProcessesByName("TabTip")
+                For Each Process In myproc
+
+                    Process.Dispose()
+
+                Next
+
+            End If
+        End If
+
+    End Sub
+End Class
